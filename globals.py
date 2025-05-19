@@ -2,8 +2,7 @@
 import numpy as np
 from threading import Lock
 
-n = 2
-# t denotes an upper bound on the number of failures tolerated
+n = 4
 t = int(np.floor(n/3))
 if n%3 == 0:
     t -= 1
