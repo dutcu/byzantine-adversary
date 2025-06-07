@@ -2,7 +2,6 @@
 import numpy as np
 from threading import Lock
 
-
 n = 4
 t = int(np.floor(n/3))
 if n%3 == 0:
