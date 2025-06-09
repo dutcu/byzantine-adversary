@@ -1,11 +1,11 @@
 import numpy as np
-import random
 from qiskit import QuantumCircuit, transpile
 from qiskit_aer import AerSimulator
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
 import threading
+from q_byzantine import shared_state as shared
 from .globals import *
-from .adversary import adversary as ADV
+from .adversary import adversary_take_over
 
 class QuantumFactory:
     def __init__(self):
@@ -70,12 +70,12 @@ def init_waiting_num_of_msgs(epoch):
     with msg_quantity_lock:
         if len(waiting_num_of_msgs) < epoch:
             min_val = min(waiting_num_of_msgs[epoch - 2]) if epoch > 1 else n
-            actual_alive = [1 for pr in processes if not pr.faulty].count(1)
+            actual_alive = [1 for pr in shared.processes if not pr.faulty].count(1)
             waiting_num_of_msgs.append([min(min_val, actual_alive)] * n)
 
 def update_waiting_num_of_msgs(epoch, new_receivers):
     with msg_quantity_lock:
-        for pr in processes:
+        for pr in shared.processes:
             if pr.id not in new_receivers:
                 waiting_num_of_msgs[epoch - 1][pr.id] -= 1
 
@@ -85,29 +85,29 @@ def get_waiting_msgs(pid, epoch):
 
 def notify_condition(epoch, msgs):
     return all(get_msgs_for_process(pr.id, msgs) == get_waiting_msgs(pr.id, epoch)
-               for pr in processes if not pr.faulty)
+               for pr in shared.processes if not pr.faulty)
 
 def send_coin(process_id, epoch):
     qc = quantum_factory.get_coin_circuit()
     msg = CircuitMessage(process_id, list(range(n)), qc)
-    with coin_lock:
+    with shared.coin_lock:
         while len(coin_msgs) < epoch:
             coin_msgs.append([])
         coin_msgs[epoch - 1].append(msg)
-    with coin_condition:
+    with shared.coin_condition:
         if notify_condition(epoch, coin_msgs[epoch - 1]):
-            coin_condition.notify_all()
+            shared.coin_condition.notify_all()
 
 def send_leader(process_id, epoch):
     qc = quantum_factory.get_leader_circuit()
     msg = CircuitMessage(process_id, list(range(n)), qc)
-    with leader_lock:
+    with shared.leader_lock:
         while len(leader_msgs) < epoch:
             leader_msgs.append([])
         leader_msgs[epoch - 1].append(msg)
-    with leader_condition:
+    with shared.leader_condition:
         if notify_condition(epoch, leader_msgs[epoch - 1]):
-            leader_condition.notify_all()
+            shared.leader_condition.notify_all()
 
 def check_condition(process, epoch, msgs, condition):
     while get_msgs_for_process(process.id, msgs[epoch - 1]) < get_waiting_msgs(process.id, epoch):
@@ -142,14 +142,14 @@ def quantum_coin_flip(processes, process, epoch):
     send_coin(process.id, epoch)
     send_leader(process.id, epoch)
 
-    new_receivers = ADV.adversary_take_over(process, coin_msgs[epoch - 1], leader_msgs[epoch - 1])
+    new_receivers = adversary_take_over(process, coin_msgs[epoch - 1], leader_msgs[epoch - 1])
 
     if process.faulty:
         update_waiting_num_of_msgs(epoch, new_receivers)
         return get_coin_result(process.id, coin_msgs[epoch - 1])[process.id]
 
-    check_condition(process, epoch, leader_msgs, leader_condition)
+    check_condition(process, epoch, leader_msgs, shared.leader_condition)
     leader_id = get_highest_leader_id(process, epoch)
-    check_condition(process, epoch, coin_msgs, coin_condition)
+    check_condition(process, epoch, coin_msgs, shared.coin_condition)
     return get_coin_result(leader_id, coin_msgs[epoch - 1])[process.id]
 

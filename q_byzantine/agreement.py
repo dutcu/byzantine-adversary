@@ -2,8 +2,9 @@ import time
 import random
 import threading
 import numpy as np
-from .broadcast import broadcast, broadcasted_messages, broadcasting_lock, decision_lock, first_to_decide
-from .globals import n, MAX_ALIVE_PROCESSES, processes, QUESTION_MARK, WAITING_MESSAGE, qb_per_process
+from q_byzantine import broadcast
+from q_byzantine import shared_state as shared
+from .globals import *
 from .weak_coin import quantum_coin_flip
 
 HALF_PLUS_ONE = int(np.floor(n / 2)) + 1
@@ -29,21 +30,21 @@ class BroadcastMessage:
 
 def waiting_condition(num_received_messages, round):
     if round == 1 or round == 2:
-        actual_alive_processes = [1 for pr in processes if not pr.faulty].count(1)
+        actual_alive_processes = [1 for pr in shared.processes if not pr.faulty].count(1)
         return num_received_messages < actual_alive_processes
     elif round == 3:
         return num_received_messages < MAX_ALIVE_PROCESSES
 
 
 def receive(process, epoch, round, required_val=None):
-    num_received_messages = 0
     start = time.time()
+    num_received_messages = 0
     while waiting_condition(num_received_messages, round):
         if time.time() - start > 10:
             print(f"[Process {process.id}] Timeout at round {round}")
             break
-        with broadcasting_lock:
-            for msg in broadcasted_messages:
+        with broadcast.broadcasting_lock:
+            for msg in broadcast.broadcasted_messages:
                 if (
                     msg.epoch == epoch
                     and msg.round == round
@@ -81,25 +82,33 @@ def agreement(process):
     epoch = 0
     while True:
         epoch += 1
+        print(f"[P{process.id}] E{epoch} | current={current}, decided={next}")
 
-        broadcast(process.id, epoch, 1, current)
+        if process.faulty:
+            broadcast.broadcast_message(process.id, epoch, 1, random.choice(["0", "1", "?", ""]))  # Malicious
+        else:
+            broadcast.broadcast_message(process.id, epoch, 1, current)
+
         if not next:
             receive(process, epoch, 1)
             current = get_majority_value(process)
         process.round_messages.clear()
 
-        broadcast(process.id, epoch, 2, current)
+        broadcast.broadcast_message(process.id, epoch, 2, current)
         if not next:
             receive(process, epoch, 2)
             answer, number = get_most_frequent_val(process)
         process.round_messages.clear()
 
-        broadcast(process.id, epoch, 3, WAITING_MESSAGE)
+        broadcast.broadcast_message(process.id, epoch, 3, WAITING_MESSAGE)
         if not next:
             receive(process, epoch, 3, WAITING_MESSAGE)
         process.round_messages.clear()
 
-        coin = quantum_coin_flip(processes, process, epoch)
+        coin = quantum_coin_flip(shared.processes, process, epoch)
+
+        if process.faulty:
+            current = random.choice(["0", "1", coin, "?"])
 
         if next:
             break
@@ -108,17 +117,20 @@ def agreement(process):
             current = answer
             next = True
             process.decision_epoch = epoch
-            with decision_lock:
-                global first_to_decide
-                if first_to_decide is None:
-                    first_to_decide = process.id
+            print(f"someone finally decided time to snatch the locky")
+            with broadcast.decision_lock:
+                print(f"got the lock buddy \n [P{process.id}] decided in epoch {epoch} with value {current}")
+                if broadcast.first_to_decide is None:
+                    broadcast.first_to_decide = process.id
+                    print(f"[P{process.id}] is the first to decide")
         elif number >= 1:
             current = answer
         else:
             current = coin
 
         if process.faulty:
-            print(f"[Faulty Process {process.id}] Injecting bad data")
+            process.decision_epoch = epoch  
+            process.output = random.choice(["0", "1", "?"])  
             break
 
     process.output = current
