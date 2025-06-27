@@ -7,12 +7,9 @@ GLOBALS_FILE="q_byzantine/globals.py"
 # Backup the original globals file
 cp "$GLOBALS_FILE" "$GLOBALS_FILE.bak"
 
-pids=()
-
 for n in "${ns[@]}"; do
     for behavior in "${behaviors[@]}"; do
         echo "Starting benchmark for n=$n, adversary_behavior=$behavior..."
-
 
         # Update globals.py
         cat > "$GLOBALS_FILE" <<EOF
@@ -35,15 +32,19 @@ adversary_behavior = $behavior
 qb_per_process = 3  # usually calculated based on n
 EOF
 
-        # Run in background with live output
-        prun -np 1 bash -c "python3 benchmark.py | tee ${n}_${behavior}.log" &
+        # Create a unique temp script for the run
+        run_script="run_${n}_${behavior}.sh"
+        cat > "$run_script" <<EORUN
+#!/bin/bash
+python3 benchmark.py | tee ${n}_${behavior}.log
+EORUN
+        chmod +x "$run_script"
 
-        # Save PID
-        pids+=($!)
+        # Launch with prun
+        prun -np 1 ./"$run_script" &
+
     done
 done
 
-echo "All pids: ${pids[@]}"
-
-# Restore original globals.py
+# Restore globals.py immediately
 mv "$GLOBALS_FILE.bak" "$GLOBALS_FILE"
