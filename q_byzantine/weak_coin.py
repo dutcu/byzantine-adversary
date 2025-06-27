@@ -3,7 +3,7 @@ from qiskit_aer import AerSimulator
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
 import threading
 from q_byzantine import shared_state as shared
-from .globals import *
+from . import globals as g
 from .adversary import adversary_take_over
 
 class QuantumFactory:
@@ -12,19 +12,19 @@ class QuantumFactory:
         self.generate_leader_circuit()
 
     def generate_coin_circuit(self):
-        qc = QuantumCircuit(n)
+        qc = QuantumCircuit(g.n)
         qc.h(0)
-        qc.cx(0, range(1, n))
+        qc.cx(0, range(1, g.n))
         qc.measure_all()
         self.coin = qc
 
     def generate_leader_circuit(self):
-        total_qubits = n * qb_per_process
+        total_qubits = g.n * g.qb_per_process
         qc = QuantumCircuit(total_qubits)
-        qc.h(range(0, qb_per_process))
-        for j in range(1, n):
-            for i in range(qb_per_process):
-                qc.cx(i, i + j * qb_per_process)
+        qc.h(range(0, g.qb_per_process))
+        for j in range(1, g.n):
+            for i in range(g.qb_per_process):
+                qc.cx(i, i + j * g.qb_per_process)
         qc.measure_all()
         self.leader = qc
 
@@ -56,7 +56,15 @@ class CircuitMessage:
         self.receivers = receivers
         self.circuit = Circuit(system)
 
-quantum_factory = QuantumFactory()
+_quantum_factory = None
+
+def get_quantum_factory():
+    global _quantum_factory
+    if _quantum_factory is None:
+        if g.n is None:
+            raise ValueError("Global variable 'n' must be configured before using QuantumFactory.")
+        _quantum_factory = QuantumFactory()
+    return _quantum_factory
 coin_msgs = []
 leader_msgs = []
 waiting_num_of_msgs = []
@@ -68,9 +76,9 @@ def get_msgs_for_process(pid, msgs):
 def init_waiting_num_of_msgs(epoch):
     with msg_quantity_lock:
         if len(waiting_num_of_msgs) < epoch:
-            min_val = min(waiting_num_of_msgs[epoch - 2]) if epoch > 1 else n
+            min_val = min(waiting_num_of_msgs[epoch - 2]) if epoch > 1 else g.n
             actual_alive = [1 for pr in shared.processes if not pr.faulty].count(1)
-            waiting_num_of_msgs.append([min(min_val, actual_alive)] * n)
+            waiting_num_of_msgs.append([min(min_val, actual_alive)] * g.n)
 
 def update_waiting_num_of_msgs(epoch, new_receivers):
     with msg_quantity_lock:
@@ -87,8 +95,8 @@ def notify_condition(epoch, msgs):
                for pr in shared.processes if not pr.faulty)
 
 def send_coin(process_id, epoch):
-    qc = quantum_factory.get_coin_circuit()
-    msg = CircuitMessage(process_id, list(range(n)), qc)
+    qc = get_quantum_factory().get_coin_circuit()
+    msg = CircuitMessage(process_id, list(range(g.n)), qc)
     with shared.coin_lock:
         while len(coin_msgs) < epoch:
             coin_msgs.append([])
@@ -98,8 +106,8 @@ def send_coin(process_id, epoch):
             shared.coin_condition.notify_all()
 
 def send_leader(process_id, epoch):
-    qc = quantum_factory.get_leader_circuit()
-    msg = CircuitMessage(process_id, list(range(n)), qc)
+    qc = get_quantum_factory().get_coin_circuit()
+    msg = CircuitMessage(process_id, list(range(g.n)), qc)
     with shared.leader_lock:
         while len(leader_msgs) < epoch:
             leader_msgs.append([])
@@ -126,7 +134,7 @@ def get_highest_leader_id(process, epoch):
         if process.id in msg.receivers:
             if not msg.circuit.measured:
                 msg.circuit.measure_circuit()
-            outcome = int(msg.circuit.memory[:qb_per_process], 2)
+            outcome = int(msg.circuit.memory[:g.qb_per_process], 2)
             leader_results.setdefault(outcome, []).append(msg.sender)
     max_outcome = max(leader_results)
     return sorted(leader_results[max_outcome])[0]

@@ -1,6 +1,6 @@
 import threading
 import random
-from .globals import *
+from . import globals as g
 from q_byzantine import shared_state as shared
 
 broadcasted_messages = []
@@ -16,7 +16,7 @@ class BroadcastMessage:
         self.epoch = epoch
         self.round = round
         self.message = message
-        self.read = [False for _ in range(n)]
+        self.read = [False for _ in range(g.n)]
 
     def __str__(self):
         return f"sender: {self.sender} | epoch: {self.epoch} | round: {self.round} | message: {self.message}"
@@ -25,14 +25,14 @@ def broadcast_message(process_id, epoch, round, message):
     process = shared.processes[process_id]
 
     if process.faulty:
-        for receiver in range(n):   # not list(range(n)) to ensure all processes receive a different random message
-            if adversary_behavior == RANDOM_CHOICE:
+        for receiver in range(g.n):   # not list(range(n)) to ensure all processes receive a different random message
+            if g.adversary_behavior == g.RANDOM_CHOICE:
                     new_msg = BroadcastMessage(process.id, [receiver], epoch, round, random.choice(["0", "1", "?"]))
-            elif adversary_behavior == INVALID_CHOICE:
+            elif g.adversary_behavior == g.INVALID_CHOICE:
                     new_msg = BroadcastMessage(process.id, [receiver], epoch, round, random.choice(["X", message]))
 
     else:
-        new_msg = BroadcastMessage(process_id, list(range(n)), epoch, round, message)
+        new_msg = BroadcastMessage(process_id, list(range(g.n)), epoch, round, message)
 
     with broadcasting_lock:
         broadcasted_messages.append(new_msg)

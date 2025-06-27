@@ -3,10 +3,9 @@ import random
 import math
 from q_byzantine import broadcast
 from q_byzantine import shared_state as shared
-from .globals import *
+from . import globals as g
 from .weak_coin import quantum_coin_flip
 
-HALF_PLUS_ONE = int(math.floor(n / 2)) + 1
 
 class Process:
     def __init__(self, id, input_val, faulty=False):
@@ -24,7 +23,7 @@ class BroadcastMessage:
         self.epoch = epoch
         self.round = round
         self.message = message
-        self.read = [False for _ in range(n)]
+        self.read = [False for _ in range(g.n)]
 
 
 def waiting_condition(num_received_messages, round):
@@ -32,7 +31,7 @@ def waiting_condition(num_received_messages, round):
         actual_alive_processes = [1 for pr in shared.processes if not pr.faulty].count(1)
         return num_received_messages < actual_alive_processes
     elif round == 3:
-        return num_received_messages < MAX_ALIVE_PROCESSES
+        return num_received_messages < g.MAX_ALIVE_PROCESSES
 
 
 def receive(process, epoch, round, required_val=None):
@@ -56,14 +55,14 @@ def receive(process, epoch, round, required_val=None):
 
 def get_majority_value(process):
     for value, count in process.round_messages.items():
-        if count >= HALF_PLUS_ONE:
+        if count >= g.HALF_PLUS_ONE:
             return value
-    return QUESTION_MARK
+    return g.QUESTION_MARK
 
 
 def get_most_frequent_val(process):
     most_frequent_val = max(process.round_messages, key=process.round_messages.get)
-    if most_frequent_val == QUESTION_MARK:
+    if most_frequent_val == g.QUESTION_MARK:
         process.round_messages.pop(most_frequent_val)
         most_frequent_val = None
         if process.round_messages:
@@ -92,9 +91,9 @@ def agreement(process):
             answer, number = get_most_frequent_val(process)
         process.round_messages.clear()
 
-        broadcast.broadcast_message(process.id, epoch, 3, WAITING_MESSAGE)
+        broadcast.broadcast_message(process.id, epoch, 3, g.WAITING_MESSAGE)
         if not next:
-            receive(process, epoch, 3, WAITING_MESSAGE)
+            receive(process, epoch, 3, g.WAITING_MESSAGE)
         process.round_messages.clear()
 
         coin = quantum_coin_flip(shared.processes, process, epoch)
@@ -105,7 +104,7 @@ def agreement(process):
         if next:
             break
 
-        if number >= HALF_PLUS_ONE:
+        if number >= g.HALF_PLUS_ONE:
             current = answer
             next = True
             process.decision_epoch = epoch

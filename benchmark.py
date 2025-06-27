@@ -1,18 +1,27 @@
-# run_trials.py
-
-from q_byzantine.agreement import Process, agreement
-from q_byzantine import shared_state as state
-from q_byzantine import broadcast
-from protocol_tests import test_all
-from q_byzantine.globals import n
-
+import argparse
 import threading
 import random
 import time
 import statistics
 
-# 
+from q_byzantine.agreement import Process, agreement
+from q_byzantine import shared_state as state
+from q_byzantine import broadcast
+from q_byzantine import globals as g
+from protocol_tests import test_all
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Run Quantum Byzantine Agreement trials.")
+    parser.add_argument("--n", type=int, default=244, help="Number of processes")
+    parser.add_argument("--adv", type=int, default=1, help="Adversary behavior (1 = RANDOM_CHOICE, 2 = INVALID_CHOICE)")
+    return parser.parse_args()
+
+
 def main():
+    args = parse_args()
+    g.configure_globals(args.n, args.adv)
+
     TRIALS = 10
     timings = []
     avg_epochs = []
@@ -23,9 +32,10 @@ def main():
         state.processes.clear()
         state.threads.clear()
         broadcast.broadcasted_messages.clear()
+        broadcast.first_to_decide = None
 
-        for i in range(n):
-            pr = Process(i, str(random.choice([0, 1])))
+        for i in range(g.n):
+            pr = Process(i, str(random.choice(["0", "1"])))
             state.processes.append(pr)
             thr = threading.Thread(target=agreement, args=(pr,))
             state.threads.append(thr)
@@ -55,7 +65,6 @@ def main():
 
         test_all(state.processes, broadcast.first_to_decide, broadcast.broadcasted_messages)
 
-    # Final stats
     overall_avg_time = statistics.mean(timings)
     overall_std_time = statistics.stdev(timings) if len(timings) > 1 else 0.0
     overall_avg_epoch = statistics.mean(avg_epochs)
