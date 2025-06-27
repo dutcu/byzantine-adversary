@@ -1,6 +1,6 @@
-import numpy as np
+import math
 n = 4
-t = int(np.floor(n/3))
+t = int(math.floor(n/3))
 if n%3 == 0:
     t -= 1
 MAX_ALIVE_PROCESSES = n - t
