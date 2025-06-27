@@ -36,12 +36,18 @@ def waiting_condition(num_received_messages, round):
 
 
 def receive(process, epoch, round, required_val=None):
+    from q_byzantine.shared_state import expected_senders
+    import time
+
     start = time.time()
-    num_received_messages = 0
-    while waiting_condition(num_received_messages, round):
-        if time.time() - start > 0.2: # Timeout after 200 ms
-            print(f"[Process {process.id}] Timeout at round {round}")
+    expected_from = expected_senders.get((epoch, round, process.id), set())
+    received_from = set()
+
+    while len(received_from) < len(expected_from):
+        if time.time() - start > 0.2:
+            print(f"[Process {process.id}] Timeout at round {round} — received from {received_from}")
             break
+
         with broadcast.broadcasting_lock:
             for msg in broadcast.broadcasted_messages:
                 if (
@@ -53,8 +59,9 @@ def receive(process, epoch, round, required_val=None):
                     if round == 3:
                         assert msg.message == required_val
                     process.round_messages[msg.message] = process.round_messages.get(msg.message, 0) + 1
-                    num_received_messages += 1
+                    received_from.add(msg.sender_id)
                     msg.read[process.id] = True
+
 
 
 def get_majority_value(process):

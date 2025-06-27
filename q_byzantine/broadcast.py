@@ -25,19 +25,35 @@ def broadcast_message(process_id, epoch, round, message):
     process = shared.processes[process_id]
 
     if process.faulty:
-        for receiver in range(n):   # not list(range(n)) to ensure all processes receive a different random message
+        for receiver in range(n):
+            send = False
+            msg_value = None
+
             if adversary_behavior == RANDOM_CHOICE:
-                    new_msg = BroadcastMessage(process.id, [receiver], epoch, round, random.choice(["0", "1", "?"]))
+                msg_value = random.choice(["0", "1", "?"])
+                send = True
+
             elif adversary_behavior == INVALID_CHOICE:
-                    new_msg = BroadcastMessage(process.id, [receiver], epoch, round, random.choice(["X", message]))
+                msg_value = random.choice(["X", message])
+                send = True
+
             elif adversary_behavior == LOST_MESSAGE:
-                 if(random.random() < 0.9):
-                    new_msg = BroadcastMessage(process.id, [receiver], epoch, round, message)
+                if random.random() < 0.9:
+                    msg_value = message
+                    send = True
+
+            if send:
+                new_msg = BroadcastMessage(process.id, [receiver], epoch, round, msg_value)
+                with broadcasting_lock:
+                    broadcasted_messages.append(new_msg)
+                    shared.expected_senders[(epoch, round, receiver)].add(process.id)
 
     else:
-        new_msg = BroadcastMessage(process_id, list(range(n)), epoch, round, message)
-
-    with broadcasting_lock:
-        broadcasted_messages.append(new_msg)
+        receivers = list(range(n))
+        new_msg = BroadcastMessage(process_id, receivers, epoch, round, message)
+        with broadcasting_lock:
+            broadcasted_messages.append(new_msg)
+            for receiver in receivers:
+                shared.expected_senders[(epoch, round, receiver)].add(process_id)
 
     

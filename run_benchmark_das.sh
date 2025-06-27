@@ -30,6 +30,7 @@ RANDOM_CHOICE = 1
 INVALID_CHOICE = 2
 LOST_MESSAGE = 3
 
+
 adversary_behavior = $behavior
 
 qb_per_process = 3  # usually calculated based on n
