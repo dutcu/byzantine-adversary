@@ -21,7 +21,7 @@ def parse_args():
 def main():
     args = parse_args()
     g.configure_globals(args.n, args.adv)
-
+    print(f"Running with {g.n} processes and adversary behavior {g.adversary_behavior}")
     TRIALS = 10
     timings = []
     avg_epochs = []
