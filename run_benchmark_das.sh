@@ -43,10 +43,7 @@ EOF
     done
 done
 
-# Optional: Wait for all background jobs to finish
-for pid in "${pids[@]}"; do
-    wait $pid
-done
+echo "All pids: ${pids[@]}"
 
 # Restore original globals.py
 mv "$GLOBALS_FILE.bak" "$GLOBALS_FILE"
