@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ns=(4 10 28 82 244)
-behaviors=(1 2 3)
+behaviors=(1 2)
 GLOBALS_FILE="q_byzantine/globals.py"
 
 # Backup the original globals file
@@ -28,7 +28,6 @@ WAITING_MESSAGE = "waiting"
 
 RANDOM_CHOICE = 1
 INVALID_CHOICE = 2
-LOST_MESSAGE = 3
 
 
 adversary_behavior = $behavior

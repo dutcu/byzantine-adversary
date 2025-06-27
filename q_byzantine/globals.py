@@ -10,7 +10,6 @@ WAITING_MESSAGE = "waiting"
 
 RANDOM_CHOICE = 1
 INVALID_CHOICE = 2
-LOST_MESSAGE = 3
 
 adversary_behavior = 1
 

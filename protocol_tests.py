@@ -1,5 +1,4 @@
 
-
 def test_validity(processes):
     inputs = []
     for pr in processes:
@@ -52,7 +51,7 @@ def test_agreement(processes, first_to_decide):
     for pr in processes:
         if pr.faulty:
             continue
-        if (pr.decision_epoch != first_decision_epoch and pr.decision_epoch !=  first_decision_epoch+1) or pr.output != first_value:
+        if (pr.decision_epoch != first_decision_epoch and pr.decision_epoch != first_decision_epoch+1) or pr.output != first_value:
             return False
     assert(first_decision_epoch is not None)
     return True

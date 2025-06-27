@@ -22,7 +22,6 @@ def main():
 
         state.processes.clear()
         state.threads.clear()
-        state.expected_senders.clear()
         broadcast.broadcasted_messages.clear()
 
         for i in range(n):
