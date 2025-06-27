@@ -39,9 +39,6 @@ def receive(process, epoch, round, required_val=None):
     start = time.time()
     num_received_messages = 0
     while waiting_condition(num_received_messages, round):
-        if time.time() - start > 10: # Timeout after 200 ms
-            print(f"[Process {process.id}] Timeout at round {round}")
-            break
         with broadcast.broadcasting_lock:
             for msg in broadcast.broadcasted_messages:
                 if (

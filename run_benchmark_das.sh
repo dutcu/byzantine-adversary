@@ -44,5 +44,4 @@ EOF
 done
 
 echo "All pids: ${pids[@]}"
-# Restore original globals.py
-mv "$GLOBALS_FILE.bak" "$GLOBALS_FILE"
+# Restore original globals.p
