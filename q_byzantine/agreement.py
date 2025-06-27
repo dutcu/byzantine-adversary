@@ -1,7 +1,5 @@
 import time
 import random
-import threading
-import numpy as np
 from q_byzantine import broadcast
 from q_byzantine import shared_state as shared
 from .globals import *
