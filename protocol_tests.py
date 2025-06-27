@@ -44,18 +44,14 @@ def test_lemma_9(processes, broadcasted_messages):
 def test_agreement(processes, first_to_decide):
     first_decision_epoch = None
     first_value = None
-    print("first_to_decide: ", first_to_decide)
     for pr in processes:
-        print("in da loop yo \n pr.id: ", pr.id, " decision_epoch: ", pr.decision_epoch, " output: ", pr.output)
         if pr.id == first_to_decide:
-            print("first to decide is pr bro lol: ", pr.id, " decision_epoch: ", pr.decision_epoch)
             first_decision_epoch = pr.decision_epoch
             first_value = pr.output
             break
     for pr in processes:
         if pr.faulty:
             continue
-        print("pr.id: ", pr.id, " decision_epoch: ", pr.decision_epoch, " output: ", pr.output, " first_decision_epoch: ", first_decision_epoch)
         if (pr.decision_epoch != first_decision_epoch and pr.decision_epoch !=  first_decision_epoch+1) or pr.output != first_value:
             return False
     assert(first_decision_epoch is not None)

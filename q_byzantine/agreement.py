@@ -1,11 +1,12 @@
 import time
 import random
+import math
 from q_byzantine import broadcast
 from q_byzantine import shared_state as shared
 from .globals import *
 from .weak_coin import quantum_coin_flip
 
-HALF_PLUS_ONE = int(np.floor(n / 2)) + 1
+HALF_PLUS_ONE = int(math.floor(n / 2)) + 1
 
 class Process:
     def __init__(self, id, input_val, faulty=False):
@@ -38,7 +39,7 @@ def receive(process, epoch, round, required_val=None):
     start = time.time()
     num_received_messages = 0
     while waiting_condition(num_received_messages, round):
-        if time.time() - start > 10:
+        if time.time() - start > 0.2: # Timeout after 200 ms
             print(f"[Process {process.id}] Timeout at round {round}")
             break
         with broadcast.broadcasting_lock:
@@ -80,12 +81,8 @@ def agreement(process):
     epoch = 0
     while True:
         epoch += 1
-        print(f"[P{process.id}] E{epoch} | current={current}, decided={next}")
 
-        if process.faulty:
-            broadcast.broadcast_message(process.id, epoch, 1, random.choice(["0", "1", "?", ""]))  # Malicious
-        else:
-            broadcast.broadcast_message(process.id, epoch, 1, current)
+        broadcast.broadcast_message(process.id, epoch, 1, current) # faulty processes are handled in broadcast function
 
         if not next:
             receive(process, epoch, 1)
@@ -106,7 +103,7 @@ def agreement(process):
         coin = quantum_coin_flip(shared.processes, process, epoch)
 
         if process.faulty:
-            current = random.choice(["0", "1", coin, "?"])
+            current = random.choice(["0", "1"])
 
         if next:
             break

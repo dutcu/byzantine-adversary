@@ -23,21 +23,15 @@ class BroadcastMessage:
 
 def broadcast_message(process_id, epoch, round, message):
     process = shared.processes[process_id]
-
     if process.faulty:
         for receiver in range(n):   # not list(range(n)) to ensure all processes receive a different random message
-            if adversary_behavior == RANDOM_CHOICE:
-                    new_msg = BroadcastMessage(process.id, [receiver], epoch, round, random.choice(["0", "1", "?"]))
-            elif adversary_behavior == INVALID_CHOICE:
-                    new_msg = BroadcastMessage(process.id, [receiver], epoch, round, random.choice(["X", message]))
-            elif adversary_behavior == LOST_MESSAGE:
-                 if(random.random() < 0.9):
-                    new_msg = BroadcastMessage(process.id, [receiver], epoch, round, message)
+            if random.random() < 0.5:   # 50% chance to broadcast a random message, the rest will omit sending the message (data loss)
+                msg = BroadcastMessage(process.id, [receiver], epoch, round, random.choice(["0", "1", "X"]))
+                broadcasted_messages.append(msg)
 
     else:
         new_msg = BroadcastMessage(process_id, list(range(n)), epoch, round, message)
-
-    with broadcasting_lock:
-        broadcasted_messages.append(new_msg)
+        with broadcasting_lock:
+            broadcasted_messages.append(new_msg)
 
     
