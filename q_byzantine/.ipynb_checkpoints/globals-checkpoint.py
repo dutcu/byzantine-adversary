@@ -1,5 +1,5 @@
 import numpy as np
-n = 4
+n = 16
 t = int(np.floor(n/3))
 if n%3 == 0:
     t -= 1

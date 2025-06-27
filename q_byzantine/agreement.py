@@ -117,12 +117,9 @@ def agreement(process):
             current = answer
             next = True
             process.decision_epoch = epoch
-            print(f"someone finally decided time to snatch the locky")
             with broadcast.decision_lock:
-                print(f"got the lock buddy \n [P{process.id}] decided in epoch {epoch} with value {current}")
                 if broadcast.first_to_decide is None:
                     broadcast.first_to_decide = process.id
-                    print(f"[P{process.id}] is the first to decide")
         elif number >= 1:
             current = answer
         else:
@@ -130,7 +127,7 @@ def agreement(process):
 
         if process.faulty:
             process.decision_epoch = epoch  
-            process.output = random.choice(["0", "1", "?"])  
+            process.output = random.choice(["0", "1"])  
             break
 
     process.output = current
