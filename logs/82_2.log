@@ -1,0 +1,27 @@
+
+##################################################
+Starting benchmark with 82 processes and adversary behavior 2
+Total trials: 5
+##################################################
+
+
+==================================================
+TRIAL 1/5 | 2025-06-28 23:33:33
+Processes: 82 | Adversary: 2
+==================================================
+Traceback (most recent call last):
+  File "/home/duru/Documents/Thesis/impl-byzantine/benchmark.py", line 114, in <module>
+    main()
+  File "/home/duru/Documents/Thesis/impl-byzantine/benchmark.py", line 67, in main
+    thr.join()
+  File "/usr/lib/python3.12/threading.py", line 1147, in join
+    self._wait_for_tstate_lock()
+  File "/usr/lib/python3.12/threading.py", line 1167, in _wait_for_tstate_lock
+    if lock.acquire(block, timeout):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
+Exception ignored in: <module 'threading' from '/usr/lib/python3.12/threading.py'>
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/threading.py", line 1622, in _shutdown
+    lock.acquire()
+KeyboardInterrupt: 

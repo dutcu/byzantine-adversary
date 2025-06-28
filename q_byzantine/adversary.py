@@ -24,3 +24,7 @@ def adversary_take_over(process, curr_coin_msgs, curr_leader_msgs):
                         break
             return new_receivers
     return list(range(g.n))
+
+def adversary_reset():
+    global num_faults
+    num_faults = 0

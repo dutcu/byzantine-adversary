@@ -1,0 +1,164 @@
+
+##################################################
+Starting benchmark with 10 processes and adversary behavior 2
+Total trials: 5
+##################################################
+
+
+==================================================
+TRIAL 1/5 | 2025-06-28 12:57:36
+Processes: 10 | Adversary: 2
+==================================================
+
+Timing breakdown:
+- Initialization: 0.0000s
+- Process creation: 0.0000s
+- Agreement protocol: 115.2292s
+- Total trial time: 115.2292s
+process(0) = 1 @epoch: 1 | input: 1 | faulty: False
+process(1) = 1 @epoch: 1 | input: 0 | faulty: False
+process(2) = 1 @epoch: 1 | input: 0 | faulty: True
+process(3) = 1 @epoch: 1 | input: 1 | faulty: True
+process(4) = 1 @epoch: 1 | input: 1 | faulty: False
+process(5) = 1 @epoch: 1 | input: 0 | faulty: False
+process(6) = 1 @epoch: 1 | input: 1 | faulty: True
+process(7) = 1 @epoch: 1 | input: 1 | faulty: False
+process(8) = 1 @epoch: 1 | input: 1 | faulty: False
+process(9) = 1 @epoch: 1 | input: 0 | faulty: False
+
+[First to decide] Process(2) decided at epoch 1
+PASSED TESTS:  4 / 4
+Lemma 9:  True
+Agreement:  True
+Termination:  True
+Validity:  True
+
+
+==================================================
+TRIAL 2/5 | 2025-06-28 12:59:31
+Processes: 10 | Adversary: 2
+==================================================
+
+Timing breakdown:
+- Initialization: 0.0000s
+- Process creation: 0.0000s
+- Agreement protocol: 214.6340s
+- Total trial time: 214.6340s
+process(0) = 1 @epoch: 1 | input: 0 | faulty: False
+process(1) = 1 @epoch: 1 | input: 1 | faulty: False
+process(2) = 1 @epoch: 1 | input: 0 | faulty: False
+process(3) = 1 @epoch: 1 | input: 1 | faulty: False
+process(4) = 1 @epoch: 1 | input: 1 | faulty: False
+process(5) = 1 @epoch: 1 | input: 1 | faulty: False
+process(6) = 1 @epoch: 1 | input: 1 | faulty: False
+process(7) = 1 @epoch: 1 | input: 1 | faulty: False
+process(8) = 1 @epoch: 1 | input: 0 | faulty: False
+process(9) = 1 @epoch: 1 | input: 1 | faulty: False
+
+[First to decide] Process(9) decided at epoch 1
+PASSED TESTS:  4 / 4
+Lemma 9:  True
+Agreement:  True
+Termination:  True
+Validity:  True
+
+
+==================================================
+TRIAL 3/5 | 2025-06-28 13:03:06
+Processes: 10 | Adversary: 2
+==================================================
+
+Timing breakdown:
+- Initialization: 0.0000s
+- Process creation: 0.0000s
+- Agreement protocol: 215.5352s
+- Total trial time: 215.5353s
+process(0) = 1 @epoch: 1 | input: 1 | faulty: False
+process(1) = 1 @epoch: 1 | input: 1 | faulty: False
+process(2) = 1 @epoch: 1 | input: 0 | faulty: False
+process(3) = 1 @epoch: 1 | input: 1 | faulty: False
+process(4) = 1 @epoch: 1 | input: 1 | faulty: False
+process(5) = 1 @epoch: 1 | input: 1 | faulty: False
+process(6) = 1 @epoch: 1 | input: 1 | faulty: False
+process(7) = 1 @epoch: 1 | input: 1 | faulty: False
+process(8) = 1 @epoch: 1 | input: 0 | faulty: False
+process(9) = 1 @epoch: 1 | input: 0 | faulty: False
+
+[First to decide] Process(0) decided at epoch 1
+PASSED TESTS:  4 / 4
+Lemma 9:  True
+Agreement:  True
+Termination:  True
+Validity:  True
+
+
+==================================================
+TRIAL 4/5 | 2025-06-28 13:06:41
+Processes: 10 | Adversary: 2
+==================================================
+
+Timing breakdown:
+- Initialization: 0.0000s
+- Process creation: 0.0000s
+- Agreement protocol: 335.6569s
+- Total trial time: 335.6570s
+process(0) = 0 @epoch: 2 | input: 0 | faulty: False
+process(1) = 0 @epoch: 2 | input: 1 | faulty: False
+process(2) = 0 @epoch: 2 | input: 0 | faulty: False
+process(3) = 0 @epoch: 2 | input: 1 | faulty: False
+process(4) = 0 @epoch: 2 | input: 0 | faulty: False
+process(5) = 0 @epoch: 2 | input: 0 | faulty: False
+process(6) = 0 @epoch: 2 | input: 1 | faulty: False
+process(7) = 0 @epoch: 2 | input: 1 | faulty: False
+process(8) = 0 @epoch: 2 | input: 1 | faulty: False
+process(9) = 0 @epoch: 2 | input: 0 | faulty: False
+
+[First to decide] Process(5) decided at epoch 2
+PASSED TESTS:  4 / 4
+Lemma 9:  True
+Agreement:  True
+Termination:  True
+Validity:  True
+
+
+==================================================
+TRIAL 5/5 | 2025-06-28 13:12:17
+Processes: 10 | Adversary: 2
+==================================================
+
+Timing breakdown:
+- Initialization: 0.0000s
+- Process creation: 0.0000s
+- Agreement protocol: 327.0627s
+- Total trial time: 327.0628s
+process(0) = 0 @epoch: 2 | input: 1 | faulty: False
+process(1) = 0 @epoch: 2 | input: 1 | faulty: False
+process(2) = 0 @epoch: 2 | input: 0 | faulty: False
+process(3) = 0 @epoch: 2 | input: 0 | faulty: False
+process(4) = 0 @epoch: 2 | input: 1 | faulty: False
+process(5) = 0 @epoch: 2 | input: 1 | faulty: False
+process(6) = 0 @epoch: 2 | input: 1 | faulty: False
+process(7) = 0 @epoch: 2 | input: 0 | faulty: False
+process(8) = 0 @epoch: 2 | input: 0 | faulty: False
+process(9) = 0 @epoch: 2 | input: 0 | faulty: False
+
+[First to decide] Process(3) decided at epoch 2
+PASSED TESTS:  4 / 4
+Lemma 9:  True
+Agreement:  True
+Termination:  True
+Validity:  True
+
+
+##################################################
+SUMMARY OVER 5 TRIALS
+##################################################
+Average time per trial: 241.62s ± 91.55s
+Average decision epoch: 1.40 ± 0.55
+
+Detailed timings:
+Trial 1: 115.2292s
+Trial 2: 214.6340s
+Trial 3: 215.5352s
+Trial 4: 335.6569s
+Trial 5: 327.0627s
