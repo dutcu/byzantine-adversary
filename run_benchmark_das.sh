@@ -14,7 +14,7 @@ for n in "${ns[@]}"; do
         echo "Starting benchmark for n=$n, adversary_behavior=$behavior..."
 
 
-        prun -np 1 bash -c "python3 -u benchmark.py --n ${n} --adv ${behavior} >${n}_${behavior}.log 2>&1" &
+        prun -np 1 -t 05:00:00 bash -c "python3 -u benchmark.py --n ${n} --adv ${behavior} >${n}_${behavior}.log 2>&1" &
 
 
         # Save PID
