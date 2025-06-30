@@ -4,6 +4,7 @@ import math
 from q_byzantine import broadcast
 from q_byzantine import shared_state as shared
 from . import globals as g
+from .adversary import adversary_take_over
 from .weak_coin import quantum_coin_flip
 
 
@@ -35,7 +36,6 @@ def waiting_condition(num_received_messages, round):
 
 
 def receive(process, epoch, round, required_val=None):
-    start = time.time()
     num_received_messages = 0
     while waiting_condition(num_received_messages, round):
         with broadcast.broadcasting_lock:
@@ -75,9 +75,12 @@ def agreement(process):
     current = process.input_val
     next = False
     epoch = 0
+    if not process.faulty:
+            adversary_take_over(process, [], [])
     while True:
         epoch += 1
-
+        print(f"Process({process.id}) starting epoch {epoch} with current value: {current}")
+        
         broadcast.broadcast_message(process.id, epoch, 1, current) # faulty processes are handled in broadcast function
 
         if not next:
@@ -98,9 +101,6 @@ def agreement(process):
 
         coin = quantum_coin_flip(shared.processes, process, epoch)
 
-        if process.faulty:
-            current = random.choice(["0", "1"])
-
         if next:
             break
 
@@ -118,7 +118,6 @@ def agreement(process):
 
         if process.faulty:
             process.decision_epoch = epoch  
-            process.output = random.choice(["0", "1"])  
             break
 
     process.output = current
