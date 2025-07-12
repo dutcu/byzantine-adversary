@@ -1,4 +1,3 @@
-
 def test_validity(processes):
     inputs = []
     for pr in processes:
@@ -45,13 +44,15 @@ def test_agreement(processes, first_to_decide):
     first_value = None
     for pr in processes:
         if pr.id == first_to_decide:
+            print("first to decide is pr bro lol: ", pr.id, " decision_epoch: ", pr.decision_epoch)
             first_decision_epoch = pr.decision_epoch
             first_value = pr.output
             break
     for pr in processes:
         if pr.faulty:
             continue
-        if (pr.decision_epoch != first_decision_epoch and pr.decision_epoch != first_decision_epoch+1) or pr.output != first_value:
+        print("pr.id: ", pr.id, " decision_epoch: ", pr.decision_epoch, " output: ", pr.output, " first_decision_epoch: ", first_decision_epoch)
+        if (pr.decision_epoch != first_decision_epoch and pr.decision_epoch !=  first_decision_epoch+1) or pr.output != first_value:
             return False
     assert(first_decision_epoch is not None)
     return True
