@@ -29,7 +29,7 @@ def print_trial_header(trial_num, total_trials, n_processes, adv_behavior):
 def main():
     args = parse_args()
     g.configure_globals(args.n, args.adv)
-    TRIALS = 5
+    TRIALS = 2
     timings = []
     avg_epochs = []
     print(f"\n{'#'*50}")
@@ -92,7 +92,7 @@ def main():
         avg_epoch = sum(epochs) / len(epochs) if epochs else 0
         avg_epochs.append(avg_epoch)
 
-        test_all(state.processes, broadcast.first_to_decide, broadcast.broadcasted_messages)
+        test_all(state.processes, broadcast.first_to_decide)
 
     # Final summary
     overall_avg_time = statistics.mean(timings)

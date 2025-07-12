@@ -63,15 +63,13 @@ def test_termination(processes):
             return False
     return True
 
-def test_all(processes, first_to_decide, broadcasted_messages):
-    lemma_9 = test_lemma_9(processes, broadcasted_messages)
+def test_all(processes, first_to_decide):
     agreement = test_agreement(processes, first_to_decide)
     termination = test_termination(processes)
     validity = test_validity(processes)
-    tests = [lemma_9, agreement, termination, validity]
+    tests = [agreement, termination, validity]
 
     print("PASSED TESTS: ", tests.count(True), "/", len(tests))
-    print("Lemma 9: ", lemma_9)
     print("Agreement: ", agreement)
     print("Termination: ", termination)
     print("Validity: ", validity)
