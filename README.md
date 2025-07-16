@@ -28,7 +28,7 @@ It extends a prior simulator with advanced adversary models to test **terminatio
 ## Install & Run
 
 ```bash
-pip install ipynb qiskit qiskit[visualization]
+pip install -r requiremments.txt
 ```
 
 Adjust `n` in `globals.py`, then run `benchmmark.py`.
