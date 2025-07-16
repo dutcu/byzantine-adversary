@@ -32,7 +32,7 @@ It extends a prior simulator with advanced adversary models to test **terminatio
 pip install -r requirements.txt
 ```
 
-Run `benchmark.py --n [number of processes] --adv [type of adversary]` 
+Run `python3 benchmark.py --n [number of processes] --adv [type of adversary]` 
 
 ---
 
