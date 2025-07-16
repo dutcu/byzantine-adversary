@@ -6,7 +6,7 @@ It extends a prior simulator with advanced adversary models to test **terminatio
 
 ---
 
-## 🧠 Key Features
+## Key Features
 
 - Protocol runs under **Qiskit Aer Simulator**
 - Supports **Random** and **Invalid** adversary behaviors
@@ -15,7 +15,7 @@ It extends a prior simulator with advanced adversary models to test **terminatio
 
 ---
 
-## 🗂️ Files
+## Files
 
 - `fail_stop_agreement.ipynb` – Main protocol logic
 - `weak_global_coin.ipynb` – Quantum weak coin flip
@@ -25,7 +25,7 @@ It extends a prior simulator with advanced adversary models to test **terminatio
 
 ---
 
-## ⚙️ Install & Run
+## Install & Run
 
 ```bash
 pip install ipynb qiskit qiskit[visualization]
