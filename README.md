@@ -17,9 +17,10 @@ It extends a prior simulator with advanced adversary models to test **terminatio
 
 ## Files
 
-- `fail_stop_agreement.ipynb` – Main protocol logic
-- `weak_global_coin.ipynb` – Quantum weak coin flip
-- `adversary.ipynb` – Faulty node simulation
+- `q_byzantine/agreement.py` – Main protocol logic
+- `q_byzantine/weak_coin.py` – Quantum weak coin flip
+- `q_byzantine/adversary.py` – Faulty node simulation
+- `q_byzantine/broadcast.py` - Message exchange logic
 - `protocol_tests.py` – Validates protocol guarantees
 - `globals.py` – Configuration (e.g., number of processes)
 
@@ -31,7 +32,7 @@ It extends a prior simulator with advanced adversary models to test **terminatio
 pip install -r requiremments.txt
 ```
 
-Adjust `n` in `globals.py`, then run `benchmmark.py`.
+Adjust `n` in `globals.py`, then run `benchmark.py`.
 
 ---
 
