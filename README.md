@@ -29,10 +29,10 @@ It extends a prior simulator with advanced adversary models to test **terminatio
 ## Install & Run
 
 ```bash
-pip install -r requiremments.txt
+pip install -r requirements.txt
 ```
 
-Adjust `n` in `globals.py`, then run `benchmark.py`.
+Run `benchmark.py --n [number of processes] --adv [type of adversary]` 
 
 ---
 
